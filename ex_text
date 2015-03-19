@@ -1,2 +1,2 @@
-nohup /usr/bin/python /var/www/dev/python_work/crawler/naverNews_parser/textParser_worker.py &
+nohup /usr/bin/python /var/www/dev/python_work/crawler/newsParser/textParser_worker.py &
 
