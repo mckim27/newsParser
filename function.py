@@ -74,11 +74,9 @@ def extractWords(texts):
   return words     
 
 ## 
-# description - 디렉토리 안에 모든 파일의 파일이름을 구해서 리스트로 리턴.
-# param  path - 디렉토리 이름.
-# return - 파일 이름들이 있는 리스트
+# description - param으로 넘어온 문자열을 파일로 저장함. 파일이름은 랜덤 문자열
+# param  content - 저장할 문자열.
 ##
-# 파라미터로 넘어온 문자들을 텍스트 파일로 저장. 파일이름은 랜덤 문자열 사용.
 def saveParseFile(content):
   # data 폴더 없으면 생성
   if not os.path.exists('./data'):
