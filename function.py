@@ -74,8 +74,8 @@ def extractWords(texts):
   return words     
 
 ## 
-# description - param으로 넘어온 문자열을 파일로 저장함. 파일이름은 랜덤 문자열
-# param  content - 저장할 문자열.
+# @ description - param으로 넘어온 문자열을 파일로 저장함. 파일이름은 랜덤 문자열
+# @ param  content - 저장할 문자열.
 ##
 def saveParseFile(content):
   # data 폴더 없으면 생성
