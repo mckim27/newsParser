@@ -3,6 +3,11 @@ import urllib, BeautifulSoup, re, blockspring, random, string, os, urlparse, sys
 from konlpy.tag import Hannanum
 
 
+## 
+# @ description - 디렉토리 안에 모든 파일의 파일이름을 구해서 리스트로 리턴.
+# @ param  path - 디렉토리 이름.
+# @ return - 파일 이름들이 있는 리스트
+##
 def getFileNames(path):
   data = {}
   for dir_entry in os.listdir(path):
@@ -12,16 +17,24 @@ def getFileNames(path):
         data[dir_entry] = my_file.read()
 
   return data
-
-# 해당 url 문서 안에 모든 text를 문자열로 만듬. 개행으로 개채 구문함.
+## 
+# @ deprecated
+# @ description - 해당 url 문서 안에 모든 text를 문자열로 만듬. 개행으로 개채 구문함.
+#               현재 사용하지 않음.  
+# @ param  url - 파싱할 문서의 주소.
+# @ return - 파일 이름들이 있는 리스트
+##
 def textParser(url):
-  try:
     texts = blockspring.runParsed("get-text-from-url", { "url": url }).params["text"]
     print texts
     saveParseFile(texts)
-  except:
-    return ''
 
+
+## 
+# @ description - 다음 뉴스기사의 타이틀과 내용을 파싱.
+# @ param  url - 파싱할 문서의 주소..
+# @ return - 파일 이름들이 있는 리스트
+##
 def dNewsParser(url):
   html = urllib.urlopen(url)
   soup = BeautifulSoup.BeautifulSoup(html)
@@ -45,7 +58,11 @@ def dNewsParser(url):
   saveParseFile(bodys)
   #saveParseFile(extractWords(bodys))
 
-
+## 
+# @ description - 텍스트의 행태소 분석을 수행 후 결과값을 스트링으로 리턴.
+# @ param  texts - 분석할 문자열.
+# @ return - 분석된 단어들.
+##
 def extractWords(texts):
   hannanum = Hannanum()
   words = ''
@@ -56,7 +73,11 @@ def extractWords(texts):
   print words
   return words     
 
-
+## 
+# description - 디렉토리 안에 모든 파일의 파일이름을 구해서 리스트로 리턴.
+# param  path - 디렉토리 이름.
+# return - 파일 이름들이 있는 리스트
+##
 # 파라미터로 넘어온 문자들을 텍스트 파일로 저장. 파일이름은 랜덤 문자열 사용.
 def saveParseFile(content):
   # data 폴더 없으면 생성
@@ -71,14 +92,23 @@ def saveParseFile(content):
     f = open('data/' + fname, 'w')
     f.write(content.encode("UTF-8"))
     f.close()
-
-# 랜덤 문자 생성기
+    
+## 
+# @ description - 랜덤 문자 생성
+# @ return - 생성된 랜덤 문자
+##
 def randomStringGenerator():
     asciiUpper = string.ascii_uppercase
     asciiLower = string.ascii_lowercase
     digits = string.digits
     return ''.join(random.choice(asciiUpper + asciiLower + digits) for x in range(48))
 
+
+## 
+# @ description - 해당 url 페이지 안에 모든 링크를 구함.
+# @ param  url - 링크를 검색할 url 문서의 주소.
+# @ return - 발견된 링크 주소들을 리스트 형태로 리턴.
+##
 def extractUrlLink(url):
   try:
     html = urllib.urlopen(url)
@@ -105,6 +135,13 @@ def extractUrlLink(url):
   #return urlLinks
   return list(set(urlLinks))
 
+
+## 
+# @ deprecated
+# @ description - url 추출 중에 필터링 기능을 할 함수. 현재 사용하지 않음.... 미완성.
+# @ param  element - url 주소.
+# @ return boolean - 해당 url 주소를 필터링 할지 말지에 대한 boolean 값.
+##
 def findFilter(element):
   if re.match('sport', str(element)):
     return False
@@ -112,9 +149,12 @@ def findFilter(element):
     return False
   return True
 
-mqhost = '192.168.0.6'
+## 
+# @ description - 기사의 내용을 파싱할 url 주소값을 rabbitmq 에 넘김.
+# @ param  url - 파싱할 url의 주소값.
+##
 def sendUrlToMq(url):
-  connection = pika.BlockingConnection(pika.ConnectionParameters(mqhost))
+  connection = pika.BlockingConnection(pika.ConnectionParameters(mqhost='your mqhost'))
   channel = connection.channel()
 
   channel.queue_declare(queue='parse_queue', durable=True)
@@ -127,5 +167,3 @@ def sendUrlToMq(url):
                       ))
   print " [x] Sent %r" % (url,)
   connection.close()
-
-  
